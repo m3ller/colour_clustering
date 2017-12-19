@@ -12,6 +12,8 @@ def main():
     # k-clustering.  with Means? Medians? k-means++?
 
     # Display image
+    new_img = Image.fromarray(img)
+    new_img.show()
 
 if __name__ == "__main__":
     main()
