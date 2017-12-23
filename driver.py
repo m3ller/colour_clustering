@@ -16,12 +16,12 @@ def kmeans(img, k):
     #TODO: Use while-loop and monitor with convergence
     for temp_ind in xrange(1):
         # Calculating mean inner-product
-        mean_prod = np.power(means,2)
+        mean_prod = np.power(means.astype(np.float32),2)
         mean_prod = np.sum(mean_prod, axis=1)
         mean_prod = np.expand_dims(mean_prod, axis=0)   # (1,k)
 
         # Calculating sample/mean inner-product
-        pseudo_dist = np.matmul(img, means.T)   # (n,d) x (d,k)
+        pseudo_dist = np.matmul(img.astype(np.float32), means.astype(np.float32).T)   # (n,d) x (d,k)
         pseudo_dist = -2*pseudo_dist + mean_prod
         
         # Find smallest distance 
@@ -30,9 +30,8 @@ def kmeans(img, k):
         # Update cluster means
         means = np.zeros((k, 3), dtype=np.uint8)
         for ii in xrange(k):
-            cluster_members = img[cluster_num==ii]
+            cluster_members = img[cluster_num==ii, :]
             means[ii,:] = np.floor(np.mean(cluster_members, axis=0)).astype(np.uint8)
-        print means
 
     return cluster_num, means
 
@@ -46,12 +45,11 @@ def main():
 
     # k-clustering.  with Means? Medians? k-means++?
     # recall that medians are more robust to outliers
-    cluster_num, means = kmeans(img, 10)
+    cluster_num, means = kmeans(img, 100)
     new_img = means[cluster_num]
     
     # Display new image
     new_img = new_img.reshape((n_row, n_col, n_dim))
-    print new_img.shape
     new_img = Image.fromarray(new_img)
     new_img.show()
 
