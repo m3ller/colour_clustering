@@ -5,6 +5,8 @@ import numpy as np
 
 """ Find k-representative colours of the image
 """
+#TODO: could introduce random restarts
+#TODO: introduce time-its
 def kmeans(img, k):
     # Randomly pick k pixels as initial cluster "means"
     # Random indices are picked without replacement; to avoid duplicate means
@@ -14,7 +16,7 @@ def kmeans(img, k):
 
     # For each cluster, compare distance with pixel.  We'll use Euclidean distance
     #TODO: Use while-loop and monitor with convergence
-    for temp_ind in xrange(1):
+    for temp_ind in xrange(20):
         # Calculating distance; note that 'means' needs to be converted to float for calculations
         # Calculating mean inner-product
         mean_prod = np.power(means, 2)
@@ -49,7 +51,7 @@ def main():
 
     # k-clustering.  with Means? Medians? k-means++?
     # recall that medians are more robust to outliers
-    cluster_num, means = kmeans(img, 100)
+    cluster_num, means = kmeans(img, 6)
     new_img = means[cluster_num]
     
     # Display new image
