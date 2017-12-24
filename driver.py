@@ -5,15 +5,11 @@ import numpy as np
 
 """ Find k-representative colours of the image
 """
+
 #TODO: could introduce random restarts
 #TODO: introduce time-its
-def kmeans(img, k):
-    # Randomly pick k pixels as initial cluster "means"
-    # Random indices are picked without replacement; to avoid duplicate means
-    n = len(img) 
-    rand_ind = np.random.choice(n, size=k, replace=False) 
-    means = img[rand_ind, :].astype(np.float32) 
-
+def kmeans_driver(img, k, means):
+    #TODO: make sure means are in float32
     # For each cluster, compare distance with pixel.  We'll use Euclidean distance
     #TODO: Use while-loop and monitor with convergence
     for temp_ind in xrange(20):
@@ -40,6 +36,22 @@ def kmeans(img, k):
    
     means = (np.round(means)).astype(np.uint8)
     return cluster_num, means
+
+def kmeans(img, k):
+    # Randomly pick k pixels as initial cluster "means"
+    # Random indices are picked without replacement; to avoid duplicate means
+    n = len(img) 
+    rand_ind = np.random.choice(n, size=k, replace=False) 
+    means = img[rand_ind, :].astype(np.float32) 
+    return kmeans_driver(img, k, means)
+
+def kmeans_pp(img, k):
+    means = np.zeros((k, 3), dtype=np.float32)
+    rand_ind = np.random.randint(n)
+    means[0,:]= img[rand_ind,:].astype(np.float32)
+
+    # Pick means based on a probability distribution
+    pass
 
 def main():
     # Read image
