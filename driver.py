@@ -46,12 +46,27 @@ def kmeans(img, k):
     return kmeans_driver(img, k, means)
 
 def kmeans_pp(img, k):
+    n = len(img)
     means = np.zeros((k, 3), dtype=np.float32)
     rand_ind = np.random.randint(n)
     means[0,:]= img[rand_ind,:].astype(np.float32)
 
     # Pick means based on a probability distribution
-    pass
+    dist_mat = np.inf * np.ones((n, k))
+    pseudo_dist = -2*np.matmul(img, means[0,:].T) + np.inner(means[0,:], means[0,:])
+    dist_mat[:,0] = pseudo_dist
+
+    for ii in xrange(1, k):
+        # Calculate probability
+        min_dist = np.min(dist_mat[:,0:ii], axis=1)
+        prob = np.power(min_dist, 2)
+        prob = prob/sum(prob)
+
+        # Sample next mean with probability, 'prob'
+        new_ind = np.random.choice(n, p=prob)
+        means[ii,:] = img[new_ind,:]  # new mean
+
+    return kmeans_driver(img, k, means)
 
 def main():
     # Read image
@@ -63,7 +78,7 @@ def main():
 
     # k-clustering.  with Means? Medians? k-means++?
     # recall that medians are more robust to outliers
-    cluster_num, means = kmeans(img, 6)
+    cluster_num, means = kmeans_pp(img, 6)
     new_img = means[cluster_num]
     
     # Display new image
