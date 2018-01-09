@@ -11,8 +11,10 @@ import numpy as np
 def kmeans_driver(img, k, means):
     #TODO: make sure means are in float32
     # For each cluster, compare distance with pixel.  We'll use Euclidean distance
-    #TODO: Use while-loop and monitor with convergence
-    for temp_ind in xrange(20):
+    old_cluster_num = np.random.randint(k, size=len(img))
+    similarity = 0
+
+    while similarity < 0.99:
         # Calculating distance; note that 'means' needs to be converted to float for calculations
         # Calculating mean inner-product
         mean_prod = np.power(means, 2)
@@ -33,6 +35,11 @@ def kmeans_driver(img, k, means):
         for ii in xrange(k):
             cluster_members = img[cluster_num==ii, :]
             means[ii,:] = np.mean(cluster_members, axis=0)
+
+        
+        # Monitor convergence.  See if the clustering has changed
+        similarity = np.sum(old_cluster_num == cluster_num) / float(len(cluster_num))
+        old_cluster_num = cluster_num
    
     means = (np.round(means)).astype(np.uint8)
     return cluster_num, means
@@ -71,14 +78,15 @@ def kmeans_pp(img, k):
 def main():
     # Read image
     #img_path = raw_input().strip()
-    img_path = "./tetris_confetti.jpg"
+    #img_path = "./tetris_confetti.jpg"
+    img_path = "./lego.jpg"
     img = np.asarray(Image.open(img_path))
     n_row, n_col, n_dim = np.shape(img)
     img = img.reshape((n_row*n_col, n_dim))
 
     # k-clustering.  with Means? Medians? k-means++?
     # recall that medians are more robust to outliers
-    cluster_num, means = kmeans_pp(img, 6)
+    cluster_num, means = kmeans(img, 10)
     new_img = means[cluster_num]
     
     # Display new image
