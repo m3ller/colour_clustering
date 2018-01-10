@@ -13,6 +13,7 @@ def kmeans_driver(img, k, means):
     # For each cluster, compare distance with pixel.  We'll use Euclidean distance
     old_cluster_num = np.random.randint(k, size=len(img))
     similarity = 0
+    loop_counter = 0    # Counts number of loops needed before reaching convergence
 
     while similarity < 0.99:
         # Calculating distance; note that 'means' needs to be converted to float for calculations
@@ -22,7 +23,6 @@ def kmeans_driver(img, k, means):
         mean_prod = np.expand_dims(mean_prod, axis=0)   # (1,k)
 
         # Calculating sample/mean inner-product
-        #pseudo_dist = np.matmul(img.astype(np.float32), means.T)   # (n,d) x (d,k)
         pseudo_dist = np.matmul(img, means.T)   # (n,d) x (d,k)
         pseudo_dist = -2*pseudo_dist + mean_prod
         
@@ -40,7 +40,9 @@ def kmeans_driver(img, k, means):
         # Monitor convergence.  See if the clustering has changed
         similarity = np.sum(old_cluster_num == cluster_num) / float(len(cluster_num))
         old_cluster_num = cluster_num
-   
+        loop_counter += 1
+  
+    print("Number of loops needed before reaching convergence: {0}".format(loop_counter))
     means = (np.round(means)).astype(np.uint8)
     return cluster_num, means
 
@@ -88,15 +90,15 @@ def main():
     # recall that medians are more robust to outliers
     cluster_num, means = kmeans(img, 10)
     new_img = means[cluster_num]
+
+    # Display original image
+    img = Image.fromarray(img.reshape((n_row, n_col, n_dim)))
+    img.show()
     
     # Display new image
     new_img = new_img.reshape((n_row, n_col, n_dim))
     new_img = Image.fromarray(new_img)
     new_img.show()
-
-    # Display original image
-    img = Image.fromarray(img.reshape((n_row, n_col, n_dim)))
-    img.show()
 
 if __name__ == "__main__":
     main()
