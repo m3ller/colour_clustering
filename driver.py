@@ -104,8 +104,8 @@ def parse_args():
     try:
         img_path = sys.argv[3]
     except IndexError:
-        print "No image path given in args; using default image './lego.jpg'"
-        img_path = "./lego.jpg"
+        print "No image path given in args; using default image './park.jpg'"
+        img_path = "./park.jpg"
 
     return k, algorithm_type, img_path
 
