@@ -86,6 +86,7 @@ def main():
     # Read arguements
     #TODO: option to pick between kmeans and kmeans++
     # Usage: python driver.py k-output-colors /path/to/image.jpg
+    assert len(sys.argv) >= 2, "Usage: python driver.py k-number-of-output-colors /path/to/image.jpg"
     k = int(sys.argv[1])
 
     try:
@@ -94,6 +95,12 @@ def main():
         print "No image path given in args; using default image './lego.jpg'"
         img_path = "./lego.jpg"
 
+    try:
+        function = sys.argv[3]
+    except IndexError:
+        print "No function given in args; using default function 'kmeans'"
+        function = "kmeans"
+
     # Read image
     img = np.asarray(Image.open(img_path))
     n_row, n_col, n_dim = np.shape(img)
@@ -101,7 +108,7 @@ def main():
 
     # k-clustering.  with Means? Medians? k-means++?
     # recall that medians are more robust to outliers
-    cluster_num, means = kmeans(img, k)
+    cluster_num, means = kmeans_pp(img, k) if function=="kmeans++" else kmeans(img,k)
     new_img = means[cluster_num]
 
     # Display original image
