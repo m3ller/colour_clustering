@@ -84,35 +84,35 @@ def kmeans_pp(img, k):
 
 
 def parse_args():
-    # Assertions
     usage = "Usage: python driver.py k-number-of-output-colors {kmeans, kmeans++} /path/to/image.jpg"
     assert len(sys.argv) >= 2, "Too few arguements. " + usage
-    assert sys.argv[1].isdigit(), "k-number-of-output-colors needs to be a digit. " + usage
 
     # Determine k
+    assert sys.argv[1].isdigit(), "k-number-of-output-colors needs to be a digit. " + usage
     k = int(sys.argv[1])
 
-    # Determine algorithm type
+    # Determine algorithm type (optional input)
     try:
+        assert sys.argv[2] in {"kmeans", "kmeans++"}, "Invalid algorithm type. " + usage
         algorithm_type = sys.argv[2]
     except IndexError:
-        print "No function given in args; using default function 'kmeans'"
-        function = "kmeans"
+        print "No algorithm type given in args; using default algorithm 'kmeans'"
+        algorithm_type = "kmeans"
    
-    # Determine image path
+    # Determine image path (optional input)
     try:
         img_path = sys.argv[3]
     except IndexError:
         print "No image path given in args; using default image './lego.jpg'"
         img_path = "./lego.jpg"
 
-    return k, img_path, algorithm_type
+    return k, algorithm_type, img_path
 
 
 
 def main():
     # Read arguements
-    k, img_path, algor_type = parse_args()
+    k, algor_type, img_path = parse_args()
 
     # Read image
     img = np.asarray(Image.open(img_path))
@@ -121,7 +121,7 @@ def main():
 
     # k-clustering.  with Means? Medians? k-means++?
     # recall that medians are more robust to outliers
-    cluster_num, means = kmeans_pp(img, k) if function=="kmeans++" else kmeans(img,k)
+    cluster_num, means = kmeans_pp(img, k) if algor_type=="kmeans++" else kmeans(img,k)
     new_img = means[cluster_num]
 
     # Display original image
