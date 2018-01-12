@@ -9,6 +9,7 @@ import sys
 
 #TODO: could introduce random restarts
 #TODO: introduce time-its
+#TODO: look into quality of the convergence.  I suspect the overal distance-to-means of kmeans is high
 def kmeans_driver(img, k, means):
     #TODO: make sure means are in float32
     # For each cluster, compare distance with pixel.  We'll use Euclidean distance
@@ -16,7 +17,7 @@ def kmeans_driver(img, k, means):
     similarity = 0
     loop_counter = 0    # Counts number of loops needed before reaching convergence
 
-    while similarity < 0.999:
+    while similarity < 1.0:
         # Calculating distance; note that 'means' needs to be converted to float for calculations
         # Calculating mean inner-product
         mean_prod = np.power(means, 2)
