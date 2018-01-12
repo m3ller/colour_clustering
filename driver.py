@@ -82,24 +82,37 @@ def kmeans_pp(img, k):
 
     return kmeans_driver(img, k, means)
 
-def main():
-    # Read arguements
-    #TODO: option to pick between kmeans and kmeans++
-    # Usage: python driver.py k-output-colors /path/to/image.jpg
-    assert len(sys.argv) >= 2, "Usage: python driver.py k-number-of-output-colors /path/to/image.jpg"
+
+def parse_args():
+    # Assertions
+    usage = "Usage: python driver.py k-number-of-output-colors {kmeans, kmeans++} /path/to/image.jpg"
+    assert len(sys.argv) >= 2, "Too few arguements. " + usage
+    assert sys.argv[1].isdigit(), "k-number-of-output-colors needs to be a digit. " + usage
+
+    # Determine k
     k = int(sys.argv[1])
 
+    # Determine algorithm type
     try:
-        img_path = sys.argv[2]
+        algorithm_type = sys.argv[2]
+    except IndexError:
+        print "No function given in args; using default function 'kmeans'"
+        function = "kmeans"
+   
+    # Determine image path
+    try:
+        img_path = sys.argv[3]
     except IndexError:
         print "No image path given in args; using default image './lego.jpg'"
         img_path = "./lego.jpg"
 
-    try:
-        function = sys.argv[3]
-    except IndexError:
-        print "No function given in args; using default function 'kmeans'"
-        function = "kmeans"
+    return k, img_path, algorithm_type
+
+
+
+def main():
+    # Read arguements
+    k, img_path, algor_type = parse_args()
 
     # Read image
     img = np.asarray(Image.open(img_path))
