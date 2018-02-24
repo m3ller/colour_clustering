@@ -16,6 +16,6 @@ example: `python driver.py 6`
 
 ## Example
 In the park picture below, we can see that the trees are very brightly coloured and distinct from the rest of the scenary.  With k=6, we see that kmeans colour clustering does not really pick out the trees, where as kmeans++ still captures that distinction.  Also note that kmeans took 99 loops until convergence, while kmeans++ took 53 loops.
-<img src="https://github.com/m3ller/colour_clustering/blob/master/park.jpg" width="320">
-![kmeans](https://github.com/m3ller/colour_clustering/blob/master/park_kmeans_99.png)
-![kmeanspp](https://github.com/m3ller/colour_clustering/blob/master/park_kmeanspp_53.png)
+<img src="https://github.com/m3ller/colour_clustering/blob/master/park.jpg" width="430">   
+<img src="https://github.com/m3ller/colour_clustering/blob/master/park_kmeans_99.png" width="430">
+<img src="https://github.com/m3ller/colour_clustering/blob/master/park_kmeanspp_53.png" width="430">
