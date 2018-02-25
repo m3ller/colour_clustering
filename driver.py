@@ -8,7 +8,6 @@ import sys
 """
 
 #TODO: could introduce random restarts
-#TODO: introduce time-its
 #TODO: look into quality of the convergence.  I suspect the overal distance-to-means of kmeans is high
 def kmeans_driver(img, k, means):
     #TODO: make sure means are in float32
