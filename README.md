@@ -38,10 +38,10 @@ In the Lego pictures below, where k=4, we can see the Kmeans and Kmeans++ produc
 
 Note for the output below, Kmeans took 26 loops, while Kmeans++ took 17 loops.
 
-| <img src="https://github.com/m3ller/colour_clustering/blob/master/lego.jpg"> |
+| <img src="https://github.com/m3ller/colour_clustering/blob/master/lego.jpg" width="430"> |
 |:---:|
 | <em> My photograph of a Lego living room. </em> |
 
-| <img src="https://github.com/m3ller/colour_clustering/blob/master/lego_kmeans_26.png"> | <img src="https://github.com/m3ller/colour_clustering/blob/master/park_kmeanspp_17.png"> |
+| <img src="https://github.com/m3ller/colour_clustering/blob/master/lego_kmeans_26.png" width="430"> | <img src="https://github.com/m3ller/colour_clustering/blob/master/lego_kmeanspp_17.png" width="430"> |
 |:---:|:---:|
 | <em> Kmeans, where k=4. </em> | <em> Kmeans++, where k=4. </em> |
