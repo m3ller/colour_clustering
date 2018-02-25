@@ -7,10 +7,13 @@ import sys
 """ Find k-representative colours of the image
 """
 
-#TODO: could introduce random restarts
-#TODO: look into quality of the convergence.  I suspect the overal distance-to-means of kmeans is high
+#TODO: Could introduce random restarts
+#TODO: Compare convergence. Suspect overall distance-to-means of kmeans is high
 def kmeans_driver(img, k, means):
-    #TODO: make sure means are in float32
+    # Calculations for means must be in floats
+    if means.dtype != 'float':
+        means = means.astype(np.float32)
+
     # For each cluster, compare distance with pixel.  We'll use Euclidean distance
     old_cluster_num = np.random.randint(k, size=len(img))
     similarity = 0
