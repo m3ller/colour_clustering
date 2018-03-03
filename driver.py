@@ -14,14 +14,13 @@ def kmeans_driver(img, k, means):
     if means.dtype != 'float':
         means = means.astype(np.float32)
 
-    # For each cluster, compare distance with pixel.  We'll use Euclidean distance
+    # For each cluster, compare Euclidean distance from pixel
     old_cluster_num = np.random.randint(k, size=len(img))
     similarity = 0
-    loop_counter = 0    # Counts number of loops needed before reaching convergence
+    loop_counter = 0    # Counts number of loops before reaching convergence
 
     while similarity < 1.0:
-        # Calculating distance; note that 'means' needs to be converted to float for calculations
-        # Calculating mean inner-product
+        # Calculating distance squared
         mean_prod = np.power(means, 2)
         mean_prod = np.sum(mean_prod, axis=1)
         mean_prod = np.expand_dims(mean_prod, axis=0)   # (1,k)
@@ -40,13 +39,12 @@ def kmeans_driver(img, k, means):
             cluster_members = img[cluster_num==ii, :]
             means[ii,:] = np.mean(cluster_members, axis=0)
 
-        
-        # Monitor convergence.  See if the clustering has changed
+        # Monitor convergence; see if the clustering has changed
         similarity = np.sum(old_cluster_num == cluster_num) / float(len(cluster_num))
         old_cluster_num = cluster_num
         loop_counter += 1
   
-    print("Number of loops needed before reaching convergence: {0}".format(loop_counter))
+    print("Number of loops needed until convergence: {0}".format(loop_counter))
     means = (np.round(means)).astype(np.uint8)
     return cluster_num, means
 
@@ -87,16 +85,19 @@ def kmeans_pp(img, k):
 
 
 def parse_args():
-    usage = "Usage: python driver.py k-number-of-output-colors {kmeans, kmeans++} /path/to/image.jpg"
+    usage = ("Usage: python driver.py k-number-of-output-colors "
+            "{kmeans, kmeans++} /path/to/image.jpg")
     assert len(sys.argv) >= 2, "Too few arguements. " + usage
 
     # Determine k
-    assert sys.argv[1].isdigit(), "k-number-of-output-colors needs to be a digit. " + usage
+    assert sys.argv[1].isdigit(), ("k-number-of-output-colors needs to be a "
+                                  "digit. " + usage)
     k = int(sys.argv[1])
 
     # Determine algorithm type (optional input)
     try:
-        assert sys.argv[2] in {"kmeans", "kmeans++"}, "Invalid algorithm type. " + usage
+        assert sys.argv[2] in {"kmeans", "kmeans++"}, ("Invalid algorithm "
+                                                       "type. " + usage)
         algorithm_type = sys.argv[2]
     except IndexError:
         print "No algorithm type given in args; using default algorithm 'kmeans'"
