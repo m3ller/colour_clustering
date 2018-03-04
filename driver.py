@@ -7,21 +7,42 @@ import sys
 """ Find k-representative colours of the image
 """
 
-def get_sq_distance(img, mean):
+def get_sq_distance(img, means, pseudo_flag=False):
     """ Returns the squared distances between each pixel in the image 'img'
-    and the 'mean'.
+    and each of the means in 'means'. If pseudo_flag=True, the distance terms
+    that are only dependent on 'img' (i.e. a_sq, see below) are ignored.
 
     Squared distance calculation:
         sq_dist = sum_i ( a_i - b_i )^2, where i is a dimension
                 = inner_product( vec(a)-vec(b), vec(a)-vec(b) )
                 = vec(a)^2 - 2*inner_prod( vec(a), vec(b) ) + vec(b)^2
-    """
-    a_sq = np.sum(np.power(img.astype(np.float32), 2), axis=1)
-    ab = np.matmul(img, mean.T)
-    b_sq = np.sum(np.power(mean,2))
+                -> a_sq - 2*ab + b_sq
 
-    sq_dist = a_sq - 2*ab + b_sq
-    return sq_dist
+    Pseudo-squared distance calculation:
+    Exactly the same as the square distance calculation, except that a_sq is
+    treated as a constant=0. This is good for doing relative distance
+    comparisons.
+    """
+    ab = np.matmul(img, means.T)
+
+    # Calculate b_sq
+    # Dependent on if we have one mean or an array of means.
+    if means.ndim == 1:
+        b_sq = np.sum(np.power(means,2))
+    else:
+        b_sq = np.sum(np.power(means, 2), axis=1)
+        b_sq = np.expand_dims(b_sq, axis=0)
+
+    # Calculate distance
+    if pseudo_flag:
+        # Calculate pseudo squared distance
+        dist = -2*ab + b_sq
+    else:
+        # Calculate squared distance
+        a_sq = np.sum(np.power(img.astype(np.float32), 2), axis=1)
+        dist = a_sq - 2*ab + b_sq
+
+    return dist
 
 
 #TODO: Could introduce random restarts
@@ -40,15 +61,8 @@ def kmeans_driver(img, k, means):
     loop_counter = 0    # Counts number of loops before reaching convergence
 
     while similarity < 1.0:
-        #TODO: add this distance to a generalized squared distance function
-        # Calculating distance squared
-        mean_prod = np.power(means, 2)
-        mean_prod = np.sum(mean_prod, axis=1)
-        mean_prod = np.expand_dims(mean_prod, axis=0)   # (1,k)
-
-        # Calculating sample/mean inner-product
-        pseudo_dist = np.matmul(img, means.T)   # (n,d) x (d,k)
-        pseudo_dist = -2*pseudo_dist + mean_prod
+        # Calculate the relative distances between each pixel and each mean
+        pseudo_dist = get_sq_distance(img, means, True)
         
         # Find smallest distance 
         cluster_num = np.argmin(pseudo_dist, axis=1)
@@ -146,7 +160,6 @@ def parse_args():
         img_path = "./park.jpg"
 
     return k, algorithm_type, img_path
-
 
 
 def main():
