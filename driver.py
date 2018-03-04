@@ -8,7 +8,7 @@ import sys
 """
 
 def get_sq_distance(img, mean):
-    """ Returns the squared distances between each pixel in the image 'img' 
+    """ Returns the squared distances between each pixel in the image 'img'
     and the 'mean'.
 
     Squared distance calculation:
@@ -16,7 +16,7 @@ def get_sq_distance(img, mean):
                 = inner_product( vec(a)-vec(b), vec(a)-vec(b) )
                 = vec(a)^2 - 2*inner_prod( vec(a), vec(b) ) + vec(b)^2
     """
-    a_sq = np.sum(np.power(img.astype(np.float32), 2), axis=1) 
+    a_sq = np.sum(np.power(img.astype(np.float32), 2), axis=1)
     ab = np.matmul(img, mean.T)
     b_sq = np.sum(np.power(mean,2))
 
@@ -27,6 +27,9 @@ def get_sq_distance(img, mean):
 #TODO: Could introduce random restarts
 #TODO: Compare convergence. Suspect overall distance-to-means of kmeans is high
 def kmeans_driver(img, k, means):
+    """ Run the Kmeans algorithm on the image 'img' with the initial means,
+    'means'.
+    """
     # Calculations for means must be in floats
     if means.dtype != 'float':
         means = means.astype(np.float32)
@@ -37,6 +40,7 @@ def kmeans_driver(img, k, means):
     loop_counter = 0    # Counts number of loops before reaching convergence
 
     while similarity < 1.0:
+        #TODO: add this distance to a generalized squared distance function
         # Calculating distance squared
         mean_prod = np.power(means, 2)
         mean_prod = np.sum(mean_prod, axis=1)
@@ -66,6 +70,12 @@ def kmeans_driver(img, k, means):
     return cluster_num, means
 
 def kmeans(img, k):
+    """ Colour clusters image 'img' to 'k' number of colours. This is done with
+    the Kmeans algorithm.
+    
+    Selects k-initial means uniformly randomly, without replacement. Pass
+    these initial means to the kmeans_driver(..).
+    """
     # Randomly pick k pixels as initial cluster "means"
     # Random indices are picked without replacement; to avoid duplicate means
     n = len(img) 
@@ -74,6 +84,12 @@ def kmeans(img, k):
     return kmeans_driver(img, k, means)
 
 def kmeans_pp(img, k):
+    """ Colour clusters image 'img' to 'k' number of colours. This is done with
+    the Kmeans++ algorithm.
+    
+    Determines initial pixel means using Kmeans++. Pass these initial means to
+    the kmeans_driver(..).
+    """
     n = len(img)
     means = np.zeros((k, 3), dtype=np.float32)
     rand_ind = np.random.randint(n)
@@ -102,6 +118,8 @@ def kmeans_pp(img, k):
 
 
 def parse_args():
+    """ Parse the arguements for the colour clustering driver.  Verify inputs.
+    """
     usage = ("Usage: python driver.py k-number-of-output-colors "
             "{kmeans, kmeans++} /path/to/image.jpg")
     assert len(sys.argv) >= 2, "Too few arguements. " + usage
