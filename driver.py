@@ -47,24 +47,31 @@ def get_sq_distance(img, means, pseudo_flag=False):
 
 #TODO: Could introduce random restarts
 #TODO: Compare convergence. Suspect overall distance-to-means of kmeans is high
-def kmeans_driver(img, k, means):
+def kmeans_driver(img, means):
     """ Run the Kmeans algorithm on the image 'img' with the initial means,
     'means'.
+
+    Returns:
+        cluster_num: Vector of integers. Suppose cluster_num[i] = j, then pixel
+            i of 'img' is closest to the cluster mean, means[j].
+        means: 2D array. Each row j is the mean of a cluster of pixels.
+
     """
     # Calculations for means must be in floats
     if means.dtype != 'float':
         means = means.astype(np.float32)
 
     # For each cluster, compare Euclidean distance from pixel
+    k = len(means)
     old_cluster_num = np.random.randint(k, size=len(img))
     similarity = 0
-    loop_counter = 0    # Counts number of loops before reaching convergence
+    loop_counter = 0
 
     while similarity < 1.0:
         # Calculate the relative distances between each pixel and each mean
         pseudo_dist = get_sq_distance(img, means, True)
         
-        # Find smallest distance 
+        # Find index of the smallest distance
         cluster_num = np.argmin(pseudo_dist, axis=1)
 
         # Update cluster means
@@ -95,7 +102,7 @@ def kmeans(img, k):
     n = len(img) 
     rand_ind = np.random.choice(n, size=k, replace=False) 
     means = img[rand_ind, :].astype(np.float32) 
-    return kmeans_driver(img, k, means)
+    return kmeans_driver(img, means)
 
 def kmeans_pp(img, k):
     """ Colour clusters image 'img' to 'k' number of colours. This is done with
@@ -128,7 +135,7 @@ def kmeans_pp(img, k):
         pseudo_dist = get_sq_distance(img, means[ii,:])
         dist_mat[:,ii] = np.abs(pseudo_dist)
 
-    return kmeans_driver(img, k, means)
+    return kmeans_driver(img, means)
 
 
 def parse_args():
