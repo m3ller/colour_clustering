@@ -7,6 +7,23 @@ import sys
 """ Find k-representative colours of the image
 """
 
+def get_sq_distance(img, mean):
+    """ Returns the squared distances between each pixel in the image 'img' 
+    and the 'mean'.
+
+    Squared distance calculation:
+        sq_dist = sum_i ( a_i - b_i )^2, where i is a dimension
+                = inner_product( vec(a)-vec(b), vec(a)-vec(b) )
+                = vec(a)^2 - 2*inner_prod( vec(a), vec(b) ) + vec(b)^2
+    """
+    a_sq = np.sum(np.power(img.astype(np.float32), 2), axis=1) 
+    ab = np.matmul(img, mean.T)
+    b_sq = np.sum(np.power(mean,2))
+
+    sq_dist = a_sq - 2*ab + b_sq
+    return sq_dist
+
+
 #TODO: Could introduce random restarts
 #TODO: Compare convergence. Suspect overall distance-to-means of kmeans is high
 def kmeans_driver(img, k, means):
@@ -64,7 +81,7 @@ def kmeans_pp(img, k):
 
     # Pick means based on a probability distribution
     dist_mat = np.inf * np.ones((n, k))
-    pseudo_dist = np.sum(np.power(img.astype(np.float32), 2), axis=1) -2*np.matmul(img, means[0,:].T) + np.sum(np.power(means[0,:],2))
+    pseudo_dist = get_sq_distance(img, means[0,:])
     dist_mat[:,0] = np.abs(pseudo_dist)
 
     for ii in xrange(1, k):
@@ -78,7 +95,7 @@ def kmeans_pp(img, k):
         means[ii,:] = img[new_ind,:]  # new mean
 
         # Update distance matrix with new mean
-        pseudo_dist = np.sum(np.power(img.astype(np.float32), 2), axis=1) -2*np.matmul(img, means[ii,:].T) + np.sum(np.power(means[ii,:], 2))
+        pseudo_dist = get_sq_distance(img, means[ii,:])
         dist_mat[:,ii] = np.abs(pseudo_dist)
 
     return kmeans_driver(img, k, means)
