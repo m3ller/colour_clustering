@@ -23,13 +23,13 @@ def get_sq_distance(img, means, pseudo_flag=False):
     treated as a constant=0. This is good for doing relative distance
     comparisons.
     """
-    ab = np.matmul(img, means.T)
-
     # Calculate b_sq
     # Dependent on if we have one mean or an array of means.
     if means.ndim == 1:
-        b_sq = np.sum(np.power(means,2))
+        ab = np.expand_dims(np.matmul(img, means.T), axis=1)
+        b_sq = np.array([[np.sum(np.power(means,2))]])
     else:
+        ab = np.matmul(img, means.T)
         b_sq = np.sum(np.power(means, 2), axis=1)
         b_sq = np.expand_dims(b_sq, axis=0)
 
@@ -40,6 +40,7 @@ def get_sq_distance(img, means, pseudo_flag=False):
     else:
         # Calculate squared distance
         a_sq = np.sum(np.power(img.astype(np.float32), 2), axis=1)
+        a_sq = np.expand_dims(a_sq, axis=1)
         dist = a_sq - 2*ab + b_sq
 
     return dist
@@ -102,6 +103,8 @@ def kmeans(img, k):
     n = len(img) 
     rand_ind = np.random.choice(n, size=k, replace=False) 
     means = img[rand_ind, :].astype(np.float32) 
+
+    print "Using Kmeans.."
     return kmeans_driver(img, means)
 
 def kmeans_pp(img, k):
@@ -119,7 +122,7 @@ def kmeans_pp(img, k):
     # Pick means based on a probability distribution
     dist_mat = np.inf * np.ones((n, k))
     pseudo_dist = get_sq_distance(img, means[0,:])
-    dist_mat[:,0] = np.abs(pseudo_dist)
+    dist_mat[:,0] = np.ravel(np.abs(pseudo_dist))
 
     for ii in xrange(1, k):
         # Calculate probability
@@ -133,8 +136,9 @@ def kmeans_pp(img, k):
 
         # Update distance matrix with new mean
         pseudo_dist = get_sq_distance(img, means[ii,:])
-        dist_mat[:,ii] = np.abs(pseudo_dist)
+        dist_mat[:,ii] = np.ravel(np.abs(pseudo_dist))
 
+    print "Using Kmeans++.."
     return kmeans_driver(img, means)
 
 
