@@ -21,7 +21,7 @@ and distinct from the rest of the scenary.
 
 With k=6, we see that Kmeans colour clustering does not really distinguish the
 trees from the buildings, where as kmeans++ is able to capture this contrast.
-This is due to the image having comparatively fewer orange/red pixels (colour
+This maybe due to the image having comparatively fewer orange/red pixels (colour
 of the trees) to blue/grey pixels (colour of buildings, sky, water), and due
 to the way Kmeans and Kmeans++ initialize their means.
 
@@ -38,7 +38,7 @@ chance for a orange/red mean to be selected afterwards.  Hence the distinction
 between the red/orange trees and everything else in Kmeans++.  
 
 Also note that Kmeans took 99 loops until convergence, while Kmeans++ took 53
-loops.   
+loops.
 
 | <img src="https://github.com/m3ller/colour_clustering/blob/master/park.jpg" width="430"> |
 |:---:|
@@ -62,3 +62,11 @@ Note for the output below, Kmeans took 26 loops, while Kmeans++ took 17 loops.
 | <img src="https://github.com/m3ller/colour_clustering/blob/master/lego_kmeans_26.png" width="430"> | <img src="https://github.com/m3ller/colour_clustering/blob/master/lego_kmeanspp_17.png" width="430"> |
 |:---:|:---:|
 | <em> Kmeans, where k=4. </em> | <em> Kmeans++, where k=4. </em> |
+
+## Future Work
+* Run Kmeans and Kmeans++ multiple times and compare their convergence times
+* Compare the level of variance in the means of Kmeans and Kmeans++
+
+## Useful Reading
+* [Mark Schmidt's Clustering Lecture](https://www.cs.ubc.ca/~schmidtm/Courses/340-F17/L8.pdf)
+* [David Arthur and Sergei Vassilvitskii's Kmeans++ Paper](http://ilpubs.stanford.edu:8090/778/1/2006-13.pdf)
